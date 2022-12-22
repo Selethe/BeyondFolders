@@ -9,7 +9,7 @@
       "48": "beyondlogo48.png",
       "128": "beyondlogo128.png"
     },
-    "action: {
+    "action": {
       "default_popup": "popup.html"
     },
    "content_scripts": [{
