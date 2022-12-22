@@ -93,6 +93,14 @@ function main_folder_add(){
             }
         }
     };
+    
+    //Looks for Order by updates and resorst the list
+    Sortby = document.getElementById("ddb-characters-listing-sort");
+    observer = new MutationObserver(function(mutationsList, observer) {
+        console.log(mutationsList);
+        move_items();
+    });
+    observer.observe(Sortby, {childList: true, attributes: true, characterData: true, subtree: true});
 
 }
 
