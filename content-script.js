@@ -93,7 +93,7 @@ function main_folder_add(){
             }
         }
     };
-    
+
     //Looks for Order by updates and resorst the list
     Sortby = document.getElementById("ddb-characters-listing-sort");
     observer = new MutationObserver(function(mutationsList, observer) {
@@ -102,6 +102,13 @@ function main_folder_add(){
     });
     observer.observe(Sortby, {childList: true, attributes: true, characterData: true, subtree: true});
 
+    const boxes = document.querySelectorAll('.listing-rpgcharacter');
+    boxes.forEach(box => {
+        box.addEventListener('dragenter', dragEnter)
+        box.addEventListener('dragover', dragOver);
+        box.addEventListener('dragleave', dragLeave);
+        box.addEventListener('drop', drop);
+    });
 }
 
 function createfolder(name,first){
@@ -231,6 +238,15 @@ function move_button() {
             this.nextElementSibling.classList.toggle("show");
         });
     }
+
+    const card = document.getElementsByClassName("ddb-campaigns-character-card-wrapper");
+    for (i=0; i< card.length; i++){
+        card[i].setAttribute("draggable","true");
+        card[i].addEventListener('dragstart', dragStart);
+        charachterid = card[i].getElementsByTagName("a")[0].href;
+        card[i].setAttribute("id",charachterid)
+    }
+    
 }
 
 function updatedropdown(){
@@ -262,7 +278,7 @@ function updatedropdown(){
                 
                 //search for the list item of the folder and it's closest id link
                 charachter = this.closest("li");
-                charachterid = charachter.getElementsByTagName("a")[0].href;
+                charachterid = charachter.id;
                 let oldfolder = this.closest("ul").id
 
                 //save it in the memory
@@ -283,7 +299,7 @@ function move_items(){
     list.forEach(function(entry) {
         // take out there link and refer it to the memory
         // if not in memory will remain in Main
-        let link = entry.getElementsByTagName("a")[0].href;
+        let link = entry.id;
         let foldername = Object.keys(saved).find(key => saved[key].includes(link));
         let targetfolder = document.getElementById(foldername);
         if (!targetfolder){
@@ -315,4 +331,49 @@ function delete_folder(){
     else{
         alert("Folder does not excist. Please try again");
     }
+}
+
+function dragStart(e) {
+    e.dataTransfer.setData('text/plain', e.target.id);
+}
+
+
+
+function dragEnter(e) {
+    e.preventDefault();
+    e.target.closest("ul").classList.add('drag-over');
+}
+
+function dragOver(e) {
+    e.preventDefault();
+    e.target.closest("ul").classList.add('drag-over');
+}
+
+function dragLeave(e) {
+    e.target.closest("ul").classList.remove('drag-over');
+}
+
+function drop(e) {
+    e.target.closest("ul").classList.remove('drag-over');
+    const charachterid = e.dataTransfer.getData('text/plain');
+    const charachter = document.getElementById(charachterid);
+
+
+    // select the name of the folder and its element
+    let targetfolder = e.target.closest("ul");
+    //search for the list item of the folder and it's closest id link
+    let oldfolder = charachter.closest("ul").id;
+    let foldername = targetfolder.id;
+    if (foldername == oldfolder) {
+        return
+    }
+    console.log(foldername);
+    
+    //save it in the memory
+    let array = saved[oldfolder];
+    array.splice(array.indexOf(charachterid), 1);
+    saved[foldername].push(charachterid);
+    save();
+    //move it to the correct folder
+    targetfolder.appendChild(charachter);
 }
