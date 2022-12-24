@@ -32,7 +32,7 @@ function main() {
     const text = document.createTextNode("Create Folder");
     button.appendChild(text);
     button.classList.add("ddb-character-app-1krv6kw");
-    button.setAttribute("id","Fc");
+    button.setAttribute("id","createFolderButton");
     
     const menu = document.getElementsByClassName("ddb-characters-listing-body j-characters-listing__content")[0];
     menu.insertBefore(button, menu.children[0]);
@@ -42,14 +42,14 @@ function main() {
     const text2 = document.createTextNode("Delete folder");
     button2.appendChild(text2);
     button2.classList.add("ddb-character-app-1krv6kw");
-    button2.setAttribute("id","Fd");
+    button2.setAttribute("id","deleteFolderButton");
     menu.insertBefore(button2, menu.children[1]);
 
     // let the "Create folder" button work
-    const Fc = document.getElementById("Fc");
-    Fc.addEventListener("click",add_folder);
-    const Fd = document.getElementById("Fd");
-    Fd.addEventListener("click",delete_folder);
+    const createFolderButton = document.getElementById("createFolderButton");
+    createFolderButton.addEventListener("click",add_folder);
+    const deleteFolderButton = document.getElementById("deleteFolderButton");
+    deleteFolderButton.addEventListener("click",delete_folder);
     
     // add the move button to the charchters
     move_button();
@@ -311,14 +311,14 @@ function move_items(){
     });
 }
 
-function delete_folder(){
+async function delete_folder(){
     let name = prompt("Charachters in deleted folder will move to Main.\n Please enter the name of the folder you want to delete:", "");
     if (name == "Main"){
         alert("Can't delete this folder")
         return
     }
     if (folderlist.includes(name)){
-        chrome.storage.local.remove(name);
+        await chrome.storage.local.remove(name);
         const folder = document.getElementById(name);
         const chara = Array.from(folder.children)
         const main = document.getElementById("Main")
@@ -336,8 +336,6 @@ function delete_folder(){
 function dragStart(e) {
     e.dataTransfer.setData('text/plain', e.target.id);
 }
-
-
 
 function dragEnter(e) {
     e.preventDefault();
