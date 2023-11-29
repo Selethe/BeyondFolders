@@ -18,38 +18,64 @@ chrome.storage.local.get(null).then((items) => {
 }).then(() => {
     // setup the event that triggers the extension
     //"DOMContentLoaded" doesn't start "load" starts to early (checked with all the "run_at" possibilities)
-    document.addEventListener("click",main);
+    // document.addEventListener("click",main);
+    waitForElement();
 });
+
+
+
+function waitForElement() {
+    const selector = '.listing-body';
+    const targetElement = document.querySelector(selector);
+  
+    if (targetElement) {
+      // If the element already exists, you can work with it here
+      console.log('Target element found:', targetElement);
+      // Do something with the target element here
+      
+    } else {
+      // If the element doesn't exist, set up a MutationObserver
+      const observer = new MutationObserver(function (mutations) {
+        const newTargetElement = document.querySelector(selector);
+        if (newTargetElement) {
+          console.log('Target element found:', newTargetElement);
+          observer.disconnect();
+          // Do something with the target element here
+          main();
+        }
+      });
+  
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+  }
+  
 
 function main() {
     console.log("start function");
 
     // delete the event that trigges so no double create folder buttons
     document.removeEventListener("click",main);
-
-    // create "Create folder" button
-    const button = document.createElement('BUTTON');
-    const text = document.createTextNode("Create Folder");
-    button.appendChild(text);
-    button.classList.add("ddb-character-app-1krv6kw");
-    button.setAttribute("id","createFolderButton");
     
+    // Create the "Create folder" button
+    const createFolderButton = document.createElement('BUTTON');
+    createFolderButton.textContent = "Create Folder";
+    createFolderButton.classList.add("ddb-character-app-1krv6kw");
+    createFolderButton.id = "createFolderButton";
+    
+    // Create the "Delete folder" button
+    const deleteFolderButton = document.createElement('BUTTON');
+    deleteFolderButton.textContent = "Delete folder";
+    deleteFolderButton.classList.add("ddb-character-app-1krv6kw");
+    deleteFolderButton.id = "deleteFolderButton";
+    
+    // Insert the buttons into the menu
     const menu = document.getElementsByClassName("ddb-characters-listing-body j-characters-listing__content")[0];
-    menu.insertBefore(button, menu.children[0]);
-
-    // create "Delete folder" button
-    const button2 = document.createElement('BUTTON');
-    const text2 = document.createTextNode("Delete folder");
-    button2.appendChild(text2);
-    button2.classList.add("ddb-character-app-1krv6kw");
-    button2.setAttribute("id","deleteFolderButton");
-    menu.insertBefore(button2, menu.children[1]);
-
-    // let the "Create folder" button work
-    const createFolderButton = document.getElementById("createFolderButton");
-    createFolderButton.addEventListener("click",add_folder);
-    const deleteFolderButton = document.getElementById("deleteFolderButton");
-    deleteFolderButton.addEventListener("click",delete_folder);
+    menu.insertBefore(createFolderButton, menu.children[0]);
+    menu.insertBefore(deleteFolderButton, menu.children[1]);
+    
+    // Add event listeners to the buttons
+    createFolderButton.addEventListener("click", add_folder);
+    deleteFolderButton.addEventListener("click", delete_folder);
     
     // add the move button to the charchters
     move_button();
@@ -210,42 +236,41 @@ function move_button() {
     
     // create button for dropdown menu
     const button = document.createElement('BUTTON');
-    button.appendChild(document.createTextNode("Move"));
-    button.classList.add("dropbtn");
-    button.classList.add("MuiButtonBase-root", "MuiButton-root", "MuiButton-text", "MuiButton-textPrimary", "MuiButton-sizeSmall", "MuiButton-textSizeSmall", "MuiButton-root", "MuiButton-text", "MuiButton-textPrimary", "MuiButton-sizeSmall", "MuiButton-textSizeSmall", "ddb-character-app-hx3opj");
-    
+    button.textContent = "Move";
+    button.classList.add("dropbtn", "MuiButtonBase-root", "MuiButton-root", "MuiButton-text", "MuiButton-textPrimary", "MuiButton-sizeSmall", "MuiButton-textSizeSmall", "ddb-character-app-hx3opj");
+
     const dropdown = document.createElement('DIV');
     dropdown.classList.add("dropdown");
     dropdown.appendChild(button);
 
     // create dropdown menu list
     const cnt = document.createElement('div');
-    cnt.setAttribute("id","myDropdown");
+    cnt.id = "myDropdown";
     cnt.classList.add("dropdown-content");
     dropdown.appendChild(cnt);
 
     //add button to charachter
-    const foot = document.getElementsByClassName("ddb-campaigns-character-card-footer-links");
-    for (i=0; i< foot.length; i++){
-        foot[i].insertBefore(dropdown.cloneNode(true),foot[i].lastElementChild);
-    }
+    const foot = document.querySelectorAll(".ddb-campaigns-character-card-footer-links");
+    foot.forEach(footElement => {
+        footElement.insertBefore(dropdown.cloneNode(true), footElement.lastElementChild);
+    });
 
     // make dropdown clickable
-    const dropdo = document.getElementsByClassName("dropbtn")
-    for (i=0; i< dropdo.length; i++){
-        dropdo[i].addEventListener("click",function() {
-            updatedropdown();
-            this.nextElementSibling.classList.toggle("show");
+    const dropdo = document.querySelectorAll(".dropbtn");
+    dropdo.forEach(dropdoElement => {
+        dropdoElement.addEventListener("click", function() {
+           updatedropdown();
+           this.nextElementSibling.classList.toggle("show");
         });
-    }
+    });
 
-    const card = document.getElementsByClassName("ddb-campaigns-character-card-wrapper");
-    for (i=0; i< card.length; i++){
-        card[i].setAttribute("draggable","true");
-        card[i].addEventListener('dragstart', dragStart);
-        charachterid = card[i].getElementsByTagName("a")[0].href;
-        card[i].setAttribute("id",charachterid)
-    }
+    const card = document.querySelectorAll(".ddb-campaigns-character-card-wrapper");
+    card.forEach(cardElement => {
+       cardElement.setAttribute("draggable", "true");
+       cardElement.addEventListener('dragstart', dragStart);
+       const charachterid = cardElement.querySelector("a").href;
+       cardElement.id = charachterid;
+    });
     
 }
 
@@ -333,7 +358,7 @@ async function delete_folder(){
     }
 }
 
-function dragStart(e) {
+function dragStart(e) {s
     e.dataTransfer.setData('text/plain', e.target.id);
 }
 
