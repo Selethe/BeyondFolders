@@ -21,7 +21,7 @@ The first part of the css file makes it so the folderlist in the move button is 
 The second part mostly seen by the collapsible class is for the different folders being able to show the charachters they have in them. I taught this to be an good option since all folders can be seen easier at once. 
 
 
-### 5. content-script.js
+### 5. Beyond_Folders.js
 #### 1. Initialisation
 The first part of this code is for the setting up global values and the getting of existing data. Then there is the activating of the script via the addEventListener, trigger I had to use was click since the load version always excecuted before the actual site was completely loaded, causing an error. I tried all the "run_at" possibilities in the manifest but the issue still persisted and the "DOMContentLoaded" trigger never seemed to activate at all.
 
