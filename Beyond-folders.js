@@ -22,32 +22,27 @@ chrome.storage.local.get(null).then((items) => {
     waitForElement();
 });
 
-
 function waitForElement() {
     const selector = '.listing-body';
     const targetElement = document.querySelector(selector);
   
     if (targetElement) {
-      // If the element already exists, you can work with it here
-      console.log('Target element found:', targetElement);
-      // Do something with the target element here
-      
-    } else {
-      // If the element doesn't exist, set up a MutationObserver
-      const observer = new MutationObserver(function (mutations) {
-        const newTargetElement = document.querySelector(selector);
-        if (newTargetElement) {
-          console.log('Target element found:', newTargetElement);
-          observer.disconnect();
-          // Do something with the target element here
-          main();
-        }
-      });
-  
-      observer.observe(document.body, { childList: true, subtree: true });
-    }
-  }
-  
+        // If the element already exists, you can work with it here
+        console.log('Target element found:', targetElement);
+        main();} 
+    else {
+        // If the element doesn't exist, set up a MutationObserver
+        const observer = new MutationObserver(function (mutations) {
+            const newTargetElement = document.querySelector(selector);
+            if (newTargetElement) {
+                console.log('Target element found:', newTargetElement);
+                observer.disconnect();
+                Main();
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true }
+        );}
+}
 
 function main() {
     console.log("start function");
