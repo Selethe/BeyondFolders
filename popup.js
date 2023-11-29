@@ -1,4 +1,3 @@
-
 function myFunction(){
     chrome.storage.local.clear();
 }

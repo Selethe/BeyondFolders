@@ -34,3 +34,11 @@
 .collapsible span {
   padding-left: 0 5px;
 }
+
+	
+.drag-over {
+  border: dashed 3px red;
+}
+.hide {
+  display: none;
+}

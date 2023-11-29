@@ -1,5 +1,5 @@
 # Beyond Folders
-#### Video Demo:  <URL HERE>
+#### Video Demo:  <URL https://youtu.be/YJL1hoFYt_Y>
 #### Description:
 This chrome extension let's people add a folder system to the dungeons and dragons charachter creator of DnDbeyond.com. This site is a first party system to make charachter creation easy but for people who have a lot of different charachters, the normal sort options still get cluttered. That's why like this post on their forums, https://www.dndbeyond.com/forums/d-d-beyond-general/d-d-beyond-feedback/57805-folders-of-characters, I have wanted a folder system for a while. There was the "Beyond me" extension (https://chrome.google.com/webstore/detail/beyond-me/eaphnbdppcjbifhjmamcdamkaaocpenn) but it hasn't worked since early 2022. With this final project I hope to put an end to this chaotic mess and give a better overview to the users of dndbeyond. 
 
@@ -21,7 +21,7 @@ The first part of the css file makes it so the folderlist in the move button is 
 The second part mostly seen by the collapsible class is for the different folders being able to show the charachters they have in them. I taught this to be an good option since all folders can be seen easier at once. 
 
 
-### 5. content-script.js
+### 5. Beyond-folders.js
 #### 1. Initialisation
 The first part of this code is for the setting up global values and the getting of existing data. Then there is the activating of the script via the addEventListener, trigger I had to use was click since the load version always excecuted before the actual site was completely loaded, causing an error. I tried all the "run_at" possibilities in the manifest but the issue still persisted and the "DOMContentLoaded" trigger never seemed to activate at all.
 

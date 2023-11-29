@@ -15,9 +15,8 @@
    "content_scripts": [{
       "matches": ["https://www.dndbeyond.com/characters"],
       "css": ["main.css"],
-      "js": ["content-script.js"]
-   }
-  ]
+      "js": ["Beyond-folders.js"]
+   }]
   }
   
   
