@@ -18,8 +18,8 @@ chrome.storage.local.get(null).then((items) => {
 }).then(() => {
     // setup the event that triggers the extension
     //"DOMContentLoaded" doesn't start "load" starts to early (checked with all the "run_at" possibilities)
-    // document.addEventListener("click",main);
-    waitForElement();
+    document.addEventListener("click",main);
+    // waitForElement();
 });
 
 function waitForElement() {
@@ -37,7 +37,7 @@ function waitForElement() {
             if (newTargetElement) {
                 console.log('Target element found:', newTargetElement);
                 observer.disconnect();
-                Main();
+                main();
             }
         });
         observer.observe(document.body, { childList: true, subtree: true }
@@ -49,23 +49,45 @@ function main() {
 
     // delete the event that trigges so no double create folder buttons
     document.removeEventListener("click",main);
-    
+   
+    // Insert the buttons into the menu
+    const menu = document.getElementsByClassName("styles_searchSort__-7qBD")[0];
+
+
     // Create the "Create folder" button
     const createFolderButton = document.createElement('BUTTON');
-    createFolderButton.textContent = "Create Folder";
-    createFolderButton.classList.add("ddb-character-app-1krv6kw");
+    const createFolderSpan = document.createElement('SPAN');
+    createFolderSpan.textContent = "Create Folder";
+    createFolderButton.appendChild(createFolderSpan);
     createFolderButton.id = "createFolderButton";
-    
+
     // Create the "Delete folder" button
     const deleteFolderButton = document.createElement('BUTTON');
-    deleteFolderButton.textContent = "Delete folder";
-    deleteFolderButton.classList.add("ddb-character-app-1krv6kw");
+    const deleteFolderSpan = document.createElement('SPAN');
+    deleteFolderSpan.textContent = "Delete Folder";
+    deleteFolderButton.appendChild(deleteFolderSpan);
     deleteFolderButton.id = "deleteFolderButton";
-    
+
+    // Get the reference span from menu.children[2]
+    const referenceSpan = menu.children[2].querySelector('span');
+
+    // Add classes from menu.children[2] to both buttons
+    menu.children[2].classList.forEach(className => {
+        createFolderButton.classList.add(className);
+        deleteFolderButton.classList.add(className);
+    });
+
+    // Add the same class from the reference span to both new spans
+    if (referenceSpan && referenceSpan.classList.length > 0) {
+        referenceSpan.classList.forEach(className => {
+            createFolderSpan.classList.add(className);
+            deleteFolderSpan.classList.add(className);
+        });
+    }
+
     // Insert the buttons into the menu
-    const menu = document.getElementsByClassName("ddb-characters-listing-body j-characters-listing__content")[0];
-    menu.insertBefore(createFolderButton, menu.children[0]);
-    menu.insertBefore(deleteFolderButton, menu.children[1]);
+    menu.insertBefore(createFolderButton, menu.children[-2]);
+    menu.insertBefore(deleteFolderButton, menu.children[-1]);
     
     // Add event listeners to the buttons
     createFolderButton.addEventListener("click", add_folder);
@@ -114,21 +136,21 @@ function main_folder_add(){
         }
     };
 
-    //Looks for Order by updates and resorst the list
-    Sortby = document.getElementById("ddb-characters-listing-sort");
-    observer = new MutationObserver(function(mutationsList, observer) {
-        console.log(mutationsList);
-        move_items();
-    });
-    observer.observe(Sortby, {childList: true, attributes: true, characterData: true, subtree: true});
-
-    const boxes = document.querySelectorAll('.listing-rpgcharacter');
-    boxes.forEach(box => {
-        box.addEventListener('dragenter', dragEnter)
-        box.addEventListener('dragover', dragOver);
-        box.addEventListener('dragleave', dragLeave);
-        box.addEventListener('drop', drop);
-    });
+    // //Looks for Order by updates and resorst the list
+    // Sortby = document.getElementById("ddb-characters-listing-sort");
+    // observer = new MutationObserver(function(mutationsList, observer) {
+    //     console.log(mutationsList);
+    //     move_items();
+    // });
+    // observer.observe(Sortby, {childList: true, attributes: true, characterData: true, subtree: true});
+// 
+    // const boxes = document.querySelectorAll('.listing-rpgcharacter');
+    // boxes.forEach(box => {
+    //     box.addEventListener('dragenter', dragEnter)
+    //     box.addEventListener('dragover', dragOver);
+    //     box.addEventListener('dragleave', dragLeave);
+    //     box.addEventListener('drop', drop);
+    // });
 }
 
 function createfolder(name,first){
@@ -231,8 +253,12 @@ function move_button() {
     // create button for dropdown menu
     const button = document.createElement('BUTTON');
     button.textContent = "Move";
-    button.classList.add("dropbtn", "MuiButtonBase-root", "MuiButton-root", "MuiButton-text", "MuiButton-textPrimary", "MuiButton-sizeSmall", "MuiButton-textSizeSmall", "ddb-character-app-hx3opj");
+    button.classList.add("dropbtn");
 
+    foot = document.querySelectorAll(".ddb-campaigns-character-card-footer-links");    
+    foot[0].firstChild.classList.forEach(className => {
+        button.classList.add(className);
+    });
     const dropdown = document.createElement('DIV');
     dropdown.classList.add("dropdown");
     dropdown.appendChild(button);
@@ -244,7 +270,6 @@ function move_button() {
     dropdown.appendChild(cnt);
 
     //add button to charachter
-    const foot = document.querySelectorAll(".ddb-campaigns-character-card-footer-links");
     foot.forEach(footElement => {
         footElement.insertBefore(dropdown.cloneNode(true), footElement.lastElementChild);
     });
@@ -253,7 +278,7 @@ function move_button() {
     const dropdo = document.querySelectorAll(".dropbtn");
     dropdo.forEach(dropdoElement => {
         dropdoElement.addEventListener("click", function() {
-           updatedropdown();
+           updatedropdown(foot[0].firstChild.classList);
            this.nextElementSibling.classList.toggle("show");
         });
     });
@@ -268,9 +293,10 @@ function move_button() {
     
 }
 
-function updatedropdown(){
+function updatedropdown(classlisting){
     // select the dropdown from the charachter card and empty it
     const dropdowncont = document.getElementsByClassName("dropdown-content");
+    console.log(dropdowncont.parentElement)
     for (i=0; i< dropdowncont.length; i++){
         let temportaty = dropdowncont[i]
         temportaty.innerHTML = "";
@@ -282,13 +308,14 @@ function updatedropdown(){
             */
            //creates and adds to the move menu the folder list
             const div =  document.createElement("div");
+            div.setAttribute("value",entry)
             const folder = document.createElement("button");
-            folder.classList.add("MuiButtonBase-root", "MuiButton-root", "MuiButton-text", "MuiButton-textPrimary", "MuiButton-sizeSmall", "MuiButton-textSizeSmall", "MuiButton-root", "MuiButton-text", "MuiButton-textPrimary", "MuiButton-sizeSmall", "MuiButton-textSizeSmall", "ddb-character-app-hx3opj");
+            classlisting.forEach(className => {
+                folder.classList.add(className);
+            });
             folder.appendChild(document.createTextNode(entry))
-            folder.setAttribute("value",entry)
             div.appendChild(folder);
             temportaty.appendChild(div);
-            
             //make the move button work
             folder.addEventListener("click",function(){
                 // select the name of the folder and its element
@@ -307,7 +334,11 @@ function updatedropdown(){
                 save();
                 //move it to the correct folder
                 targetfolder.appendChild(charachter);
-            });        
+            });
+
+            div.addEventListener("click",function(){
+                folder.click()
+            });         
         });
     }
 }
