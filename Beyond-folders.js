@@ -165,7 +165,7 @@ function createfolder(name,first){
     const collaps = document.createElement('BUTTON');
     collaps.appendChild(span);
     collaps.setAttribute("type","button");
-    collaps.classList.add("collapsible","arrow");
+    collaps.classList.add("collapsible","arrow","Select_button__3TOVC");
     
     const main_div = document.createElement('DIV');
     main_div.appendChild(collaps);
@@ -296,7 +296,6 @@ function move_button() {
 function updatedropdown(classlisting){
     // select the dropdown from the charachter card and empty it
     const dropdowncont = document.getElementsByClassName("dropdown-content");
-    console.log(dropdowncont.parentElement)
     for (i=0; i< dropdowncont.length; i++){
         let temportaty = dropdowncont[i]
         temportaty.innerHTML = "";
@@ -313,32 +312,31 @@ function updatedropdown(classlisting){
             classlisting.forEach(className => {
                 folder.classList.add(className);
             });
-            folder.appendChild(document.createTextNode(entry))
+            folder.setAttribute("value",entry)
+            const moveSpan = document.createElement('SPAN');
+            moveSpan.textContent = entry;
+            folder.appendChild(moveSpan)
+            folder.style.width = "100%"
             div.appendChild(folder);
             temportaty.appendChild(div);
             //make the move button work
             folder.addEventListener("click",function(){
                 // select the name of the folder and its element
-                let foldername = this.value
+                let foldername = this.value;
                 let targetfolder = document.getElementById(foldername);
                 
                 //search for the list item of the folder and it's closest id link
                 charachter = this.closest("li");
                 charachterid = charachter.getElementsByTagName("a")[0].href;
-                let oldfolder = this.closest("ul").id
-
-                //save it in the memory
+                let oldfolder = this.closest("ul").id;
+                console.log(foldername);
                 let array = saved[oldfolder];
                 array.splice(array.indexOf(charachterid), 1);
                 saved[foldername].push(charachterid);
                 save();
                 //move it to the correct folder
                 targetfolder.appendChild(charachter);
-            });
-
-            div.addEventListener("click",function(){
-                folder.click()
-            });         
+            });      
         });
     }
 }
